@@ -36,4 +36,17 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function friendsOfMine(){
+        return $this->belongsToMany('App\User', 'friends', 'user_id', 'friend_id');
+    }
+
+    public function friendOf(){
+        return $this->belongsToMany('App\User', 'friends', 'friend_id', 'user_id');
+    }
+
+    public function friends(){
+        return $this->friendsOfMine->merge($this->friendOf);
+    }
+
 }

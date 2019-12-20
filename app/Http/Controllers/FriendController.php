@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Friend;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use MongoDB\Driver\Session;
 
 class FriendController extends Controller
 {
@@ -14,7 +16,8 @@ class FriendController extends Controller
      */
     public function index()
     {
-        //
+        $friends = Auth::user()->friends();
+        return view('chat.index', compact('friends'));
     }
 
     /**
@@ -30,18 +33,29 @@ class FriendController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
+        //validate
+
+        //add to db
+        $friend = new Friend();
+        $friend->user_id = Auth::user()->id;
+        $friend->friend_id = $request->friend_id;
+        $friend->save();
+
         //
+        Session::flash('success', 'Friend has been added');
+
+        return redirect()->back();
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Friend  $friend
+     * @param \App\Friend $friend
      * @return \Illuminate\Http\Response
      */
     public function show(Friend $friend)
@@ -52,7 +66,7 @@ class FriendController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Friend  $friend
+     * @param \App\Friend $friend
      * @return \Illuminate\Http\Response
      */
     public function edit(Friend $friend)
@@ -63,8 +77,8 @@ class FriendController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Friend  $friend
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Friend $friend
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Friend $friend)
@@ -75,7 +89,7 @@ class FriendController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Friend  $friend
+     * @param \App\Friend $friend
      * @return \Illuminate\Http\Response
      */
     public function destroy(Friend $friend)
